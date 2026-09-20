@@ -1,65 +1,79 @@
 {
-  "api_version": "3",
+  "required_api_version": "2",
   "name": "VS Code: Projects",
   "description": "Open your VSCode: projects from anywhere using Ulauncher",
-  "authors": "Bruno Paz",
+  "developer_name": "Bruno Paz",
   "icon": "images/icon.png",
-  "input_debounce": 0.1,
-  "triggers": {
-    "vscode_projects_kw": {
+  "options": {
+    "query_debounce": 0.1
+  },
+  "preferences": [
+    {
+      "id": "vscode_projects_kw",
+      "type": "keyword",
       "name": "VS Code: Projects",
       "description": "Open your VSCode: projects",
-      "keyword": "{"
-    }
-  },
-  "preferences": {
-    "config_path": {
+      "default_value": "{"
+    },
+    {
+      "id": "config_path",
       "type": "input",
       "name": "Config path",
       "description": "The path to VSCode:'s config folder (e.g., update if you are using Code: - OSS)",
       "default_value": "~/.config/Code:/"
     },
-    "projects_file_path": {
+    {
+      "id": "projects_file_path",
       "type": "input",
       "name": "Projects File path",
       "description": "The location of projects file cache created by Project Manager VSCode: Extension",
       "default_value": "~/.config/Code:/User/globalStorage/alefragnani.project-manager/"
     },
-    "code_executable_path": {
+    {
+      "id": "code_executable_path",
       "type": "input",
       "name": "VS Code: executable path",
       "description": "The path to the VS Code: executable",
       "default_value": "code"
     },
-    "include_recent_workspaces": {
-      "type": "checkbox",
+    {
+      "id": "include_recent_workspaces",
+      "type": "select",
       "name": "Include recent workspaces",
       "description": "Include recent VS Code: workspaces (enabled by default)",
-      "default_value": true
+      "options": ["true", "false"],
+      "default_value": "true"
     },
-    "use_shared_state_db": {
-      "type": "checkbox",
+    {
+      "id": "use_shared_state_db",
+      "type": "select",
       "name": "Read recent workspaces from the Recent Workspaces menu",
       "description": "Take recent workspaces from VS Code:'s \"Recent Workspaces\" menu (shared state.vscdb) instead of the per-window workspaceStorage folder",
-      "default_value": false
+      "options": ["true", "false"],
+      "default_value": "false"
     },
-    "shared_storage_path": {
+    {
+      "id": "shared_storage_path",
       "type": "input",
       "name": "Shared storage path",
       "description": "The path to VS Code's shared folder for the entries to the \"Recent Workspaces\" menu (update if you are using a different fork of VS Code)",
       "default_value": "~/.vscode-shared/"
     },
-    "include_files": {
-      "type": "checkbox",
+    {
+      "id": "include_files",
+      "type": "select",
       "name": "Include files",
       "description": "Include recently opened individual files (only available when reading from the Recent Workspaces menu)",
-      "default_value": false
+      "options": ["true", "false"],
+      "default_value": "false"
     },
-    "include_project_manager": {
-      "type": "checkbox",
+    {
+      "id": "include_project_manager",
+      "type": "select",
       "name": "Include project manager projects",
       "description": "Include projects from the Project Manager extension (disabled by default)",
-      "default_value": false
+      "options": ["true", "false"],
+      "default_value": "false"
     }
-  }
+  ]
 }

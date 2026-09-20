@@ -3,7 +3,12 @@
 import logging
 import os
 import subprocess
-from ulauncher.api import Extension, Result
+
+from ulauncher.api.client.Extension import Extension
+from ulauncher.api.client.EventListener import EventListener
+from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 from ulauncher.api.shared.action.OpenAction import OpenAction
 from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
@@ -16,17 +21,22 @@ MAX_PROJECTS_IN_LIST = 8
 
 
 class VSCodeProjectsExtension(Extension):
-    """ Main Extension Class  """
+    """ Main Extension Class """
 
     def __init__(self):
         """ Initializes the extension """
-        super().__init__()
+        super(VSCodeProjectsExtension, self).__init__()
         self.vscode = Client()
+        self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
+        self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
-    def on_input(self, input_text: str, trigger_id: str):
-        """ Handle user input and return matching projects """
-        query = input_text or ""
-        projects = self.vscode.get_projects(self.preferences)
+
+class KeywordQueryEventListener(EventListener):
+    """ Handles user input and returns matching projects """
+
+    def on_event(self, event, extension):
+        query = event.get_argument() or ""
+        projects = extension.vscode.get_projects(extension.preferences)
 
         if query:
             projects = [
@@ -35,21 +45,23 @@ class VSCodeProjectsExtension(Extension):
             ]
 
         if not projects:
-            yield Result(
-                icon='images/icon.png',
-                name='No projects found matching your query: %s' % query,
-                highlightable=False,
-                on_enter=HideWindowAction()
-            )
-            return
+            return RenderResultListAction([
+                ExtensionResultItem(
+                    icon='images/icon.png',
+                    name='No projects found matching your query: %s' % query,
+                    highlightable=False,
+                    on_enter=HideWindowAction()
+                )
+            ])
 
+        items = []
         for project in projects[:MAX_PROJECTS_IN_LIST]:
             icon = 'images/icon.png'
 
             if project['type'] in ('workspace', 'file'):
                 icon = 'images/code-dark-icon.png'
 
-            yield Result(
+            items.append(ExtensionResultItem(
                 icon=icon,
                 name=project['name'],
                 description=project['path'],
@@ -58,11 +70,17 @@ class VSCodeProjectsExtension(Extension):
                     'type': project['type'],
                 }),
                 on_alt_enter=OpenAction(project['path'])
-            )
+            ))
 
-    def on_item_enter(self, data):
-        """ Handle the click on an item of the extension """
-        code_executable = self.preferences['code_executable_path']
+        return RenderResultListAction(items)
+
+
+class ItemEnterEventListener(EventListener):
+    """ Handles the click on an item of the extension """
+
+    def on_event(self, event, extension):
+        data = event.get_data()
+        code_executable = extension.preferences['code_executable_path']
         new_env = os.environ.copy()
         new_env.pop('PYTHONPATH', None)
 
