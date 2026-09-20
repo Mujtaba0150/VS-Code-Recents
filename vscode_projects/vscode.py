@@ -22,19 +22,20 @@ class Client(object):
         workspace_projects = []
 
         names_index = []
-        if preferences.get('include_project_manager', False):
+        if preferences.get('include_project_manager', 'false') == 'true':
             project_manager_projects = self.get_projects_from_project_manager(
                 preferences)
 
             names_index = [p['name'] for p in project_manager_projects]
 
-        if preferences.get('include_recent_workspaces', True):
-            if preferences.get('use_shared_state_db', False):
-                workspace_projects = self.get_projects_from_shared_state_db(
-                    preferences, names_index)
-            else:
-                workspace_projects = self.get_projects_from_workspaces(
-                    preferences, names_index)
+        recent_workspaces_mode = preferences.get('include_recent_workspaces', 'All')
+        if recent_workspaces_mode == 'From Recent Workspaces Menu':
+            workspace_projects = self.get_projects_from_shared_state_db(
+                preferences, names_index)
+        elif recent_workspaces_mode == 'All':
+            workspace_projects = self.get_projects_from_workspaces(
+                preferences, names_index)
+        # any other value (e.g. 'False') -> no recent workspaces at all
 
         all_projects = project_manager_projects + workspace_projects
         return all_projects
@@ -161,7 +162,7 @@ class Client(object):
             LOGGING.warning('Shared state database not found: %s', db_path)
             return []
 
-        include_files = preferences.get('include_files', False)
+        include_files = preferences.get('include_files', 'false') == 'true'
 
         raw_value = self._read_recent_paths_from_db(db_path)
         if raw_value is None:
