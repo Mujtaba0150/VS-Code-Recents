@@ -1,0 +1,47 @@
+{
+  "api_version": "3",
+  "name": "VS Code: Projects",
+  "description": "Open your VSCode: projects from anywhere using Ulauncher",
+  "authors": "Bruno Paz",
+  "icon": "images/icon.png",
+  "input_debounce": 0.1,
+  "triggers": {
+    "vscode_projects_kw": {
+      "name": "VS Code: Projects",
+      "description": "Open your VSCode: projects",
+      "keyword": "{"
+    }
+  },
+  "preferences": {
+    "config_path": {
+      "type": "input",
+      "name": "Config path",
+      "description": "The path to VSCode:'s config folder (e.g., update if you are using Code: - OSS)",
+      "default_value": "~/.config/Code:/"
+    },
+    "projects_file_path": {
+      "type": "input",
+      "name": "Projects File path",
+      "description": "The location of projects file cache created by Project Manager VSCode: Extension",
+      "default_value": "~/.config/Code:/User/globalStorage/alefragnani.project-manager/"
+    },
+    "code_executable_path": {
+      "type": "input",
+      "name": "VS Code: executable path",
+      "description": "The path to the VS Code: executable",
+      "default_value": "code"
+    },
+    "include_recent_workspaces": {
+      "type": "checkbox",
+      "name": "Include recent workspaces",
+      "description": "Include recent VS Code: workspaces (enabled by default)",
+      "default_value": true
+    },
+    "include_project_manager": {
+      "type": "checkbox",
+      "name": "Include project manager projects",
+      "description": "Include projects from the Project Manager extension (disabled by default)",
+      "default_value": false
+    }
+  }
+}
