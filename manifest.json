@@ -37,6 +37,24 @@
       "description": "Include recent VS Code: workspaces (enabled by default)",
       "default_value": true
     },
+    "use_shared_state_db": {
+      "type": "checkbox",
+      "name": "Read recent workspaces from the Recent Workspaces menu",
+      "description": "Take recent workspaces from VS Code:'s \"Recent Workspaces\" menu (shared state.vscdb) instead of the per-window workspaceStorage folder",
+      "default_value": false
+    },
+    "shared_storage_path": {
+      "type": "input",
+      "name": "Shared storage path",
+      "description": "The path to VS Code's shared folder for the entries to the \"Recent Workspaces\" menu (update if you are using a different fork of VS Code)",
+      "default_value": "~/.vscode-shared/"
+    },
+    "include_files": {
+      "type": "checkbox",
+      "name": "Include files",
+      "description": "Include recently opened individual files (only available when reading from the Recent Workspaces menu)",
+      "default_value": false
+    },
     "include_project_manager": {
       "type": "checkbox",
       "name": "Include project manager projects",

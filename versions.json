@@ -1,4 +1,3 @@
 [
-  { "required_api_version": "2", "commit": "v5" },
   { "required_api_version": "3", "commit": "master" }
 ]

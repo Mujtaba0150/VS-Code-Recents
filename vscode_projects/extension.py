@@ -46,14 +46,17 @@ class VSCodeProjectsExtension(Extension):
         for project in projects[:MAX_PROJECTS_IN_LIST]:
             icon = 'images/icon.png'
 
-            if project['type'] == 'workspace':
+            if project['type'] in ('workspace', 'file'):
                 icon = 'images/code-dark-icon.png'
 
             yield Result(
                 icon=icon,
                 name=project['name'],
                 description=project['path'],
-                on_enter=ExtensionCustomAction({'path': project['path']}),
+                on_enter=ExtensionCustomAction({
+                    'path': project['path'],
+                    'type': project['type'],
+                }),
                 on_alt_enter=OpenAction(project['path'])
             )
 
@@ -61,10 +64,22 @@ class VSCodeProjectsExtension(Extension):
         """ Handle the click on an item of the extension """
         code_executable = self.preferences['code_executable_path']
         new_env = os.environ.copy()
-        del new_env['PYTHONPATH']
-        if not data['path'].startswith('vscode-remote://'):
-            subprocess.run([code_executable, data['path']], env=new_env)
-        else:
-            subprocess.run([code_executable, '--folder-uri', data['path']], env=new_env)
+        new_env.pop('PYTHONPATH', None)
+
+        path = data['path']
+        is_remote = path.startswith('vscode-remote://')
+
+        try:
+            if not is_remote:
+                subprocess.run([code_executable, path], env=new_env)
+            elif data.get('type') == 'file':
+                subprocess.run(
+                    [code_executable, '--file-uri', path], env=new_env)
+            else:
+                subprocess.run(
+                    [code_executable, '--folder-uri', path], env=new_env)
+        except OSError:
+            LOGGING.exception(
+                'Failed to launch VS Code: executable: %s', code_executable)
 
         return HideWindowAction()
